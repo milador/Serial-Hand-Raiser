@@ -13,7 +13,9 @@
 
 Adafruit_NeoPixel pixels(NUM_PIXELS, PIN_NEOPIXEL, NEO_GRB + NEO_KHZ800);
 char inputColor[7];
+char inputAction[2];
 uint32_t color;
+bool performAction=false;
 int currentAction;                                // OFF = 0, ON = 1, BLINK = 2
 
 //*** SETUP ***//
@@ -40,28 +42,38 @@ void loop() {
     if(serialString.length()==7){
      serialString.toCharArray(inputColor, 8);
 
-      uint8_t red   = 16*char2num(inputColor[1]) + char2num(inputColor[2]);
-      uint8_t green = 16*char2num(inputColor[3]) + char2num(inputColor[4]);
-      uint8_t blue  = 16*char2num(inputColor[5]) + char2num(inputColor[6]);
-    
-      color = (red << 16) | (green << 8) | blue;  
-      updateLed(color);
-      Serial.print("LED color changed:");
-      Serial.println(serialString);
+     if(inputColor[0] == '#') {
+        uint8_t red   = 16*char2num(inputColor[1]) + char2num(inputColor[2]);
+        uint8_t green = 16*char2num(inputColor[3]) + char2num(inputColor[4]);
+        uint8_t blue  = 16*char2num(inputColor[5]) + char2num(inputColor[6]);
+      
+        color = (red << 16) | (green << 8) | blue;  
+        updateLed(color);
+        Serial.print("LED color changed:");
+        Serial.println(serialString);      
+      }
     } // Action data
-    else if(serialString.length()==1){  
-        int serialAction = serialString.toInt();
-        if(serialAction == 2) {
+    else if(serialString.length()==2){  
+        serialString.toCharArray(inputAction, 3);
+        if(inputAction[0] == '@'){
+          performAction=true;
+          currentAction = inputAction[1];
+        }
+        else {
+          performAction=false;
+        }
+        currentAction = inputAction[1] - '0';  // char to int
+        if(performAction == true && currentAction == 2) {
           Serial.println("LED blinking");
           blinkLed(BLINK_DELAY);
-        } else if(serialAction == 1) {
+        } else if(performAction == true && currentAction == 1) {
           Serial.println("LED On");
           turnLedOn();
-        } else if(serialAction == 0) {
+        } else if(performAction == true && currentAction == 0) {
           Serial.println("LED Off");
           turnLedOff();
         }
-        currentAction = serialAction;
+        performAction=false;
     }
   }
   if(currentAction == 2){
@@ -80,6 +92,7 @@ uint8_t char2num(char c)
 //*** LED BLINK ***//
 void blinkLed(long mstime){
   // turn on
+  Serial.print("LED blinking:");
   Serial.println(color);
   pixels.fill(color);
   pixels.show();
