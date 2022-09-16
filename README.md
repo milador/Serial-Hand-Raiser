@@ -2,6 +2,11 @@
 
 A simple hand raiser device that uses web serial to communicate with host through a web app.
 
+
+<p align="center">
+<img align="center" src="https://github.com/milador/Serial-Hand-Raiser/raw/main/Resources/image.png" width="75%" height="75%" alt="Serial-Hand-Raiser"/>
+</p>
+
 ## App/Demo
 
 The web app can be accessed through following web pafe:
