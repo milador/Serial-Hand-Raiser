@@ -9,7 +9,7 @@ A simple hand raiser device that uses web serial to communicate with host throug
 
 ## App/Demo
 
-The web app can be accessed through following web pafe:
+The web app can be accessed through following web page:
 
 [Serial-Hand-Raiser App](https://milador.ca/projects/serial_hand_raiser/) 
 
